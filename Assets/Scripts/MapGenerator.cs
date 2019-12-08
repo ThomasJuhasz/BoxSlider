@@ -54,7 +54,8 @@ public class MapGenerator : MonoBehaviour
             randomPositions.ForEach(x => {
                 if(Random.Range(0, 10) < 3)
                 {
-                    AddBlock(x, shiftingObstacle);
+                    AddBlock(x, obstacle);
+                    //  AddBlock(x, shiftingObstacle);
                 } else
                 {
                     AddBlock(x, obstacle);
@@ -67,9 +68,7 @@ public class MapGenerator : MonoBehaviour
 
     void AddBlock(int x, GameObject o)
     {
-        // TODO why do I need this 1.5f?
         var pos = transform.position + new Vector3(x, 0, 0);
-        Debug.Log(pos);
         obstacles.Add(Instantiate(o, pos, Quaternion.identity));
 
         if (obstacles.Count > rowsOfBlocksToGenerateAtOnce * 3 * 2)
