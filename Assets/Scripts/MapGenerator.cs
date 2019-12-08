@@ -1,14 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
     public GameObject obstacle;
+    public GameObject shiftingObstacle;
     public Transform player;
     public int spacesBetweenObstacles = 15;
 
-    int rowsOfBlocksToGenerateAtOnce = 5;
+    int rowsOfBlocksToGenerateAtOnce = 10;
     int generationThreshold;
     List<GameObject> obstacles = new List<GameObject>();
 
@@ -28,37 +28,49 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    int RandomPosition()
+    {
+        return Random.Range(0, 5) * 3;
+    }
+
     void GenerateBlocks()
     {
         for (int i = 0; i < rowsOfBlocksToGenerateAtOnce; i++)
         {
             var randomPositions = new List<int>();
 
-            while (randomPositions.Count < 3)
+            while (randomPositions.Count < 4)
             {
-                var random = Random.Range(1, 15);
+                var random = RandomPosition();
 
-                while (randomPositions.Exists(x => x < random + 2 && x > random - 2))
+                while (randomPositions.Exists(x => x == random))
                 {
-                    random = Random.Range(1, 15);
+                    random = RandomPosition();
                 }
 
                 randomPositions.Add(random);
             }
 
-            AddBlock(randomPositions[0], 0);
-            AddBlock(randomPositions[1], 0);
-            AddBlock(randomPositions[2], 0);
+            randomPositions.ForEach(x => {
+                if(Random.Range(0, 10) < 3)
+                {
+                    AddBlock(x, shiftingObstacle);
+                } else
+                {
+                    AddBlock(x, obstacle);
+                }
+            });
 
             transform.position += new Vector3(0, 0, spacesBetweenObstacles);
         }
     }
 
-    void AddBlock(int x, int z)
+    void AddBlock(int x, GameObject o)
     {
-        var pos = transform.position + new Vector3(x, 0, z);
-
-        obstacles.Add(Instantiate(obstacle, pos, Quaternion.identity));
+        // TODO why do I need this 1.5f?
+        var pos = transform.position + new Vector3(x, 0, 0);
+        Debug.Log(pos);
+        obstacles.Add(Instantiate(o, pos, Quaternion.identity));
 
         if (obstacles.Count > rowsOfBlocksToGenerateAtOnce * 3 * 2)
         {
