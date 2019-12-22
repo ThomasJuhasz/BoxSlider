@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
+    public GameObject obstacleContainer;
     public GameObject obstacle;
     public GameObject shiftingObstacle;
     public Transform player;
@@ -39,7 +40,7 @@ public class MapGenerator : MonoBehaviour
         {
             var randomPositions = new List<int>();
 
-            while (randomPositions.Count < 4)
+            while (randomPositions.Count < 3)
             {
                 var random = RandomPosition();
 
@@ -68,8 +69,11 @@ public class MapGenerator : MonoBehaviour
 
     void AddBlock(int x, GameObject o)
     {
-        var pos = transform.position + new Vector3(x, 0, 0);
-        obstacles.Add(Instantiate(o, pos, Quaternion.identity));
+        var pos = transform.position + new Vector3(x, .5f, 0);
+        var newBlock = Instantiate(o, pos, Quaternion.identity);
+        newBlock.transform.parent = obstacleContainer.transform;
+
+        obstacles.Add(newBlock);
 
         if (obstacles.Count > rowsOfBlocksToGenerateAtOnce * 3 * 2)
         {
